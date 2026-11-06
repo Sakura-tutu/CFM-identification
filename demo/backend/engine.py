@@ -384,15 +384,8 @@ class Engine:
             # query worksheet is still present.
             if run.result is not None:return
             if run.review_kind not in audit.STAGES:return
-            # Residual notes need a full reread before they can be handed to a
-            # theorem adapter. This asks about ownership; it never deletes them.
-            candidate=(run.submission or {}).get('candidate',{})
-            if run.review_kind=='source' and run.automatic_rechecks<1 and (
-                candidate.get('additional_restrictions') or candidate.get('unresolved')):
-                preview=recovery.prepare(run,allow_busy=True)
-                if preview['available']:
-                    entry,feedback=recovery.request(run,preview['binding_sha256'],allow_busy=True)
-                    run.automatic_rechecks+=1;self._recheck(run,entry,feedback);continue
+            # Audit first: residual notes can be genuine restrictions. Spend
+            # the bounded reread only on a located model-reading error.
             self.event(run,'REVIEWING_READING','正在后台核对业务解释与原文来源，不需要逐字段操作')
             request,fields,sources=audit.request(run)
             number=1+sum(k.startswith('reading_audit_') and k.endswith('_request') for k in run.artifacts)
@@ -432,11 +425,13 @@ class Engine:
             if answer['verdict']=='PASS':
                 run.stage='REVIEW_REQUIRED'
                 self._review(run,audit.records(run,answer));continue
-            # One bounded, source-located reread for residual notes. No automatic loops.
+            # Reuse validated field/source locations, not a generic note sweep.
+            # Feedback remains a request to reread, never a replacement answer.
             if answer['verdict']=='READING_ERROR' and run.automatic_rechecks<1:
-                preview=recovery.prepare(run,allow_busy=True)
+                preview=recovery.prepare(run,allow_busy=True,audit_findings=answer['issues'])
                 if preview['available']:
-                    entry,feedback=recovery.request(run,preview['binding_sha256'],allow_busy=True)
+                    entry,feedback=recovery.request(run,preview['binding_sha256'],allow_busy=True,
+                                                    audit_findings=answer['issues'])
                 else:entry=None
                 if entry:
                     run.automatic_rechecks+=1;self._recheck(run,entry,feedback);continue
