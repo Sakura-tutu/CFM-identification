@@ -15,6 +15,11 @@ DESIGN_FIELDS = {
     'TWO_STAGE_QUOTA_MIXTURE': ('groups', 'quota_profiles', 'profile_probabilities'),
 }
 ASSIGNMENT_FIELDS = tuple(dict.fromkeys(k for fields in DESIGN_FIELDS.values() for k in fields))
+PROBABILITIES_DESCRIPTION = (
+    '仅INDEPENDENT_BERNOULLI使用：各对象独立抽签的启用概率，约分分数字符串。'
+    '该设计的明确概率规则应完整读取；缺少规则保持null。'
+    '固定名额、分组、簇或两阶段设计使用各自专门参数，本字段必须为null；'
+    '不能把这些设计可推导的边际启用概率填到此处，也不能因此判定材料缺少概率。')
 EXPOSURE_GROUPS = {
     'STRICT_MAJORITY_TIES_LOW': 'strict_majority_ties_low',
     'THREE_LEVEL_TREATED_NEIGHBOR_FRACTION': 'three_level_treated_neighbor_fraction',
