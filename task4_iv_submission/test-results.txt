@@ -1,0 +1,13 @@
+Environment: Python 3.11+
+
+Command: python -m pytest -q
+Result: 8 passed
+
+Command: python -m examples.iv_demo
+Result:
+- LATE = 1.0; first stage = 0.5.
+- ATE bounds = [0.5, 1.0] without monotonicity (16 response types).
+- ATE bounds = [0.5, 1.0] with monotonicity (12 response types).
+- Primal-dual certificate verification returned valid=True for both ATE models.
+
+The example uses a synthetic population distribution. These results confirm the included tests and example run in the current environment; they do not establish compatibility with the full CFM repository or validate the scientific IV assumptions.

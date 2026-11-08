@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cfm-task4-iv-starter"
+version = "0.1.0"
+description = "Binary instrumental-variable LATE and ATE bounds starter deliverable"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.24", "scipy>=1.10"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[tool.setuptools.packages.find]
+include = ["cfm_id*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
